@@ -1,0 +1,30 @@
+name: Deploy to Surge.sh
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install Surge
+        run: npm install -g surge
+      
+      - name: Deploy to Surge
+        env:
+          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+        run: |
+          npx surge login --token ${{ secrets.SURGE_TOKEN }}
+          npx surge . pawsandco.surge.sh --token ${{ secrets.SURGE_TOKEN }}
